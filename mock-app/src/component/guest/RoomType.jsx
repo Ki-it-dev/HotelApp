@@ -22,12 +22,12 @@ const RoomType = (props) => {
     }, [props.roomtypes])
 
     return (
-        <Row style={{marginTop: 20}}>
+        <Row style={{ marginTop: 20 }}>
             <Space direction="horizontal">
                 {roomtypes.map(item => {
                     return (
                         <>
-                            <Button style={{background: "var(--mainColor--)", minWidth: 120}} type="primary" onClick={() => props.handleRoomtype(item.categoryName)}>{item.categoryName}</Button> {" "}
+                            <Button style={{ background: "var(--mainColor--)", minWidth: 120 }} type="primary" onClick={() => props.handleRoomtype(item.categoryName)}>{item.categoryName}</Button> {" "}
                         </>
                     )
                 })}

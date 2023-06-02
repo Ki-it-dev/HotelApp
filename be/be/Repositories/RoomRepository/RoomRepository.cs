@@ -199,7 +199,7 @@ namespace be.Repositories.RoomRepository
         {
             var bookings_roomId = from Booking in _context.Bookings
                                   join BookingDetail in _context.BookingDetails on Booking.BookingId equals BookingDetail.BookingId
-                                  where Booking.CheckOut > sd && Booking.CheckIn < ed
+                                  where Booking.CheckOut > sd.AddDays(1) && Booking.CheckIn < ed.AddDays(1)
                                   select BookingDetail.RoomId;
 
 

@@ -115,7 +115,7 @@ export default function BookingPage() {
         }
         else {
             setBookingRooms([])
-        }    
+        }
     }
 
     useEffect(() => {
@@ -131,19 +131,21 @@ export default function BookingPage() {
             <div className='time_roomtype_sticky'>
                 <BookingTime date={current} setCurrent={handleCurrent} />
                 <RoomType roomtypes={roomtypes} handleRoomtype={handleRoomtype} />
-                <h1 style={{fontFamily: "'Playfair Display', serif", color: "var(--mainColor--)", marginTop: 10}}>{roomType}</h1>
-
+                <h1 style={{ fontFamily: "'Playfair Display', serif", color: "var(--mainColor--)", marginTop: 10 }}>{roomType}</h1>
+                {rooms.length != 0 ? <></> : <div style={{ fontSize: "1.1rem", color: "red" }}>All rooms are sold out for your chosen dates!<br></br> Please choose other times ! </div>}
             </div>
             <div className='list_sticky'>
                 <BookingList data={bookingRooms} handleRemove={handleRemove} date={current} />
             </div>
 
 
-            {rooms.map(room => {
-                return (
-                    <BookingRoom data={room} handleSelect={handleSelect} key={room.roomId} />
-                )
-            })}
+            {
+                rooms.map(room => {
+                    return (
+                        <BookingRoom data={room} handleSelect={handleSelect} key={room.roomId} />
+                    )
+                })
+            }
 
 
             <footer style={{ padding: "20px" }}></footer>

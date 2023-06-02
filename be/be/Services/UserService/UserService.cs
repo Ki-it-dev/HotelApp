@@ -64,6 +64,14 @@ namespace be.Services
         {
             return await _userRepo.ForgotPassword(email);
         }
+        public async Task<object> GetInfo(string token)
+        {
+            return await _userRepo.GetInfo(token);
+        }
+        public async Task<object> GetUserByEmail(string email)
+        {
+            return await _userRepo.GetUserByEmail(email);
+        }
         #endregion
 
         #region HUYNG5 - MANAGE USERS BY MANAGER/RECEPTIONIST

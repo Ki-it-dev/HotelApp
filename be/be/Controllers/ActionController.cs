@@ -14,22 +14,22 @@ namespace be.Controllers
 
     public class ActionController : ControllerBase
     {
-        private readonly DbFourSeasonHotelContext _db;
-        private readonly IConfiguration _configuration;
-        private readonly IUserService _userService;
+        private readonly DbFourSeasonHotelContext DateBase;
+        private readonly IConfiguration Configuration;
+        private readonly IUserService UserService;
 
         public ActionController(DbFourSeasonHotelContext db, IConfiguration configuration, IUserService userService)
         {
-            this._db = db;
-            this._configuration = configuration;
-            this._userService = userService;
+            this.DateBase = db;
+            this.Configuration = configuration;
+            this.UserService = userService;
         }
         [HttpPost("login")]
         public ActionResult Login([FromBody] Login login)
         {
             try
             {
-                var result = _userService.Login(login.email, login.password, _configuration);
+                var result = UserService.Login(login.Email, login.Password, Configuration);
                 return Ok(result);
             }
             catch
@@ -42,7 +42,7 @@ namespace be.Controllers
         {
             try
             {
-                var result = await _userService.Register(user);
+                var result = await UserService.Register(user);
                 return Ok(result);
             }
             catch
@@ -55,14 +55,14 @@ namespace be.Controllers
         {
             try
             {
-                var _user = await _db.Users.FindAsync(id);
+                var _user = await DateBase.Users.FindAsync(id);
                 if (_user == null)
                 {
                     return NotFound();
                 }
                 _user.Status = "1";
-                _db.Entry(await _db.Users.FirstOrDefaultAsync(x => x.UserId == id)).CurrentValues.SetValues(_user);
-                await _db.SaveChangesAsync();
+                DateBase.Entry(await DateBase.Users.FirstOrDefaultAsync(x => x.UserId == id)).CurrentValues.SetValues(_user);
+                await DateBase.SaveChangesAsync();
                 return Ok(new
                 {
                     status = 200,
@@ -78,7 +78,7 @@ namespace be.Controllers
 
     public class Login
     {
-        public string email { get; set; }
-        public string password { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

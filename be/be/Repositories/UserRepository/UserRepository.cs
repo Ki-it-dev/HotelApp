@@ -270,6 +270,52 @@ namespace be.Repositories.UserRepository
             };
 
         }
+        public async Task<object> GetInfo(string token)
+        {
+            string _token = token.Split(' ')[1];
+            if (_token == null)
+            {
+                return new
+                {
+                    message = "Token is wrong!",
+                    status = 400
+                };
+            }
+            var handle = new JwtSecurityTokenHandler();
+            string email = handle.ReadJwtToken(_token).Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+            if (user == null)
+            {
+                return new
+                {
+                    message = "User is not found!",
+                    status = 404
+                };
+            }
+            return new
+            {
+                message = "Get information success!",
+                status = 200,
+                data = user
+            };
+        }
+        public async Task<object> GetUserByEmail(string email)
+        {
+            var user = await _context.Users.Where(x => x.Email.Contains(email)).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Email is not found"
+                };
+            }
+            return new
+            {
+                status = 200,
+                message = "Email is found"
+            };
+        }
         #endregion
 
         #region HUYNG5 - MANAGE USERS BY MANAGER/RECEPTIONIST

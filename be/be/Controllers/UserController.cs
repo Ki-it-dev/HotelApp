@@ -16,69 +16,51 @@ namespace be.Controllers
 
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly DbFourSeasonHotelContext _db;
+        private readonly IUserService UserService;
+        private readonly DbFourSeasonHotelContext Db;
         public UserController(DbFourSeasonHotelContext db, IUserService userService)
         {
-            this._db = db;
-            this._userService = userService;
+            this.Db = db;
+            this.UserService = userService;
         }
 
         #region HIEUVMH15 - LOGIN/REGISTER/CREATE TOKEN
         [HttpGet("info")]
         public async Task<ActionResult> GetInfo(string token)
         {
-            string _token = token.Split(' ')[1];
-            if (_token == null)
+            try
             {
-                return Ok(new
+                if(token == "")
                 {
-                    message = "Token is wrong!",
-                    status = 400
-                });
+                    return BadRequest();
+                }
+                var result = await UserService.GetInfo(token);
+                return Ok(result);
             }
-            var handle = new JwtSecurityTokenHandler();
-            string email = handle.ReadJwtToken(_token).Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
-            var user = _db.Users.Where(x => x.Email == email).FirstOrDefault();
-            if (user == null)
+            catch
             {
-                return Ok(new
-                {
-                    message = "User is not found!",
-                    status = 404
-                });
+                return BadRequest();
             }
-            return Ok(new
-            {
-                message = "Get information success!",
-                status = 200,
-                data = user
-            });
         }
         [HttpGet("search")]
         public async Task<ActionResult> GetUserByEmail(string email)
         {
-            var user = await _db.Users.Where(x => x.Email.Contains(email)).FirstOrDefaultAsync();
-            if (user == null)
+            try
             {
-                return Ok(new
-                {
-                    status = 404,
-                    message = "Email is not found"
-                });
+                var result = await UserService.GetUserByEmail(email);
+                return Ok(result);
             }
-            return Ok(new
+            catch
             {
-                status = 200,
-                message = "Email is found"
-            });
+                return BadRequest();
+            }
         }
         [HttpPost("forgot")]
         public async Task<ActionResult> ForgotPassword([FromBody] string email)
         {
             try
             {
-                var result = await _userService.ForgotPassword(email);
+                var result = await UserService.ForgotPassword(email);
                 return Ok(result);
             }
             catch
@@ -94,7 +76,7 @@ namespace be.Controllers
         {
             try
             {
-                var user = _userService.GetUserInformation(userId);
+                var user = UserService.GetUserInformation(userId);
                 return Ok(user);
 
             }
@@ -109,7 +91,7 @@ namespace be.Controllers
         {
             try
             {
-                var updateData = _userService.UpdateUser(user);
+                var updateData = UserService.UpdateUser(user);
                 return Ok(updateData);
             }
             catch (Exception ex)
