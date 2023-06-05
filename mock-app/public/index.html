@@ -46,40 +46,39 @@
 <script type="text/javascript">
 	var user = JSON.parse(sessionStorage.getItem('user'))
 
-	if (user.roleId == 4) {
+	function Chat() {
 		(function (d, m) {
 			var kommunicateSettings =
 			{
-				"userId": user.userId,
-				"email": user.email,
-				"phone": user.phone,
-				"password": user.password,
-				"authenticationTypeId": 1, // 1 for password verification from Kommunicate server and 0 for password verification from your server
-
 				"appId": "dc04450c101f811cb3f900cb94ee8e90",
 				"popupWidget": true,
 				"automaticChatOpenOnNavigation": true,
 
-				"onInit": function () {
-					var chatContext = {
-						"userId": user.userId,
-						"phone": user.phone,
-						"email": user.email
-					}
-					Kommunicate.updateChatContext(chatContext);
-					var userdetail = {
-						"email": user.email,
-						"phone": user.phone,
-						"displayName": user.fullName,
-						"imageLink": user.avatar,
-						"metadata": {      // add userinfo you want to show in userinfo section of kommunicate dashboard
-							"companyName": 'companyName',
-							"designation": 'designation',
-							"linkedInProfile": 'linkedInProfile',
-						}
-					};
-					Kommunicate.updateUser(userdetail);
-				}
+				// "userId": user.userId,
+				// "email": user.email,
+				// "phone": user.phone,
+				// "password": user.password,
+				// "authenticationTypeId": 1, // 1 for password verification from Kommunicate server and 0 for password verification from your server
+				// "onInit": function () {
+				// 	var chatContext = {
+				// 		"userId": user.userId,
+				// 		"phone": user.phone,
+				// 		"email": user.email
+				// 	}
+				// 	Kommunicate.updateChatContext(chatContext);
+				// 	var userdetail = {
+				// 		"email": user.email,
+				// 		"phone": user.phone,
+				// 		"displayName": user.fullName,
+				// 		"imageLink": user.avatar,
+				// 		"metadata": {      // add userinfo you want to show in userinfo section of kommunicate dashboard
+				// 			"companyName": 'companyName',
+				// 			"designation": 'designation',
+				// 			"linkedInProfile": 'linkedInProfile',
+				// 		}
+				// 	};
+				// 	Kommunicate.updateUser(userdetail);
+				// }
 			};
 
 			var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
@@ -87,6 +86,14 @@
 			var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
 			window.kommunicate = m; m._globals = kommunicateSettings;
 		})(document, window.kommunicate || {});
+	}
+
+	if (user == null) {
+		Chat()
+	}
+
+	if (user.roleId != 1 || user.roleId != 2 || user.roleId != 3) {
+		Chat()
 	}
 
 </script>

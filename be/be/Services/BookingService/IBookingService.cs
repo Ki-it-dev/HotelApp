@@ -16,5 +16,9 @@ namespace be.Services
         void UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status);
         object AddBooking(Data data);
         bool isBooking(Data data);
+
+        int GetLastBookingUser(int userId);
+        IEnumerable<dynamic> GetCreatedBooking();
+        bool PaymentAcceptable(DateTime bookingDate, string status);
     }
 }

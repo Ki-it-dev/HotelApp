@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Receipt from "../../guest/Receipt";
 import HeaderGuest from "../../guest/Header";
@@ -7,6 +7,7 @@ import { Image, Card, notification } from 'antd';
 import '../../../assests/css/client-room.css'
 import '../../../assests/css/client-booking.css'
 import axios from "axios";
+import Item from "antd/es/list/Item";
 
 export default function BookingDetail() {
 
@@ -25,20 +26,19 @@ export default function BookingDetail() {
         currency: "USD",
     });
 
+
     const CreateBooking = () => {
 
         const user = JSON.parse(localStorage.getItem('user'));
 
+        //getDataBookingLast(user.userId)
+
         const roomIds = []
 
         data.rooms.forEach(i => {
-
             roomIds.push({
-
                 roomId: i.roomInfo.roomId
-
             });
-
         });
 
         const bookingData = {
@@ -51,7 +51,7 @@ export default function BookingDetail() {
 
                 totalPrice: data.totalPrice,
 
-                status: "1",
+                status: "0",
 
                 user: {
 
@@ -73,42 +73,37 @@ export default function BookingDetail() {
         const url = process.env.REACT_APP_SERVER_HOST + 'booking/order';
 
         axios.post(url, bookingData)
-
             .then((res) => {
-
                 if (res.data.message == "Booking success!") {
-
-                    notification.success({
-
-                        message: "Successful booking!",
-
-                        duration: 3
-
-                    })
-
-                    setTimeout(() => {
-
-                        window.location.href = "/"
-
-                    }, 3000);
-
+                    //console.log("Wait booking");
                 }
-
             })
-
             .catch(error => {
+                console.log(error);
+            });
+    }
 
+    const handleChangeStatus = () => {
+        const userId = JSON.parse(localStorage.getItem('user')).userId;
+        const url = process.env.REACT_APP_SERVER_HOST + 'Guest/UpdateLastBooking/idUser?idUser=' + userId
+        axios.put(url)
+            .then((result) => {
                 notification.success({
-
-                    message: "Something is wrong, try it later!",
-
+                    message: "Successful booking!",
                     duration: 3
-
                 })
 
+                setTimeout(() => {
+                    window.location.href = "/"
+                }, 3000);
+            })
+            .catch(error => {
+                notification.error({
+                    message: "Something is wrong, try it later!",
+                    duration: 3
+                })
             });
-
-    }
+    };
 
     const RoomPayment = (props) => (
         <>
@@ -134,6 +129,9 @@ export default function BookingDetail() {
 
     const Payment = (props) => {
         const totalPrice = props.data.totalPrice
+        // props.data.rooms.map(item => console.log(item.roomInfo.roomId))
+        // console.log(props);
+
         return (
             <>
                 <div className="payment">
@@ -157,10 +155,18 @@ export default function BookingDetail() {
                                     ]
                                 })
                             }}
+
+                            onCancel={() => window.location.href = 'http://localhost:3000/booking'}
+
+                            onClick={() => CreateBooking()}
+
                             onApprove={async (data, actions) => {
                                 const order = await actions.order.capture();
+                                //console.log(order);
                                 if (order.status == 'COMPLETED') {
-                                    CreateBooking();
+                                    //CreateBooking();
+                                    handleChangeStatus()
+                                    // console.log("Update book");
                                 }
                             }}
                         />

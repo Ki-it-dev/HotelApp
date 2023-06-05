@@ -59,8 +59,43 @@ namespace be.Controllers
                 return NotFound();
             return Ok(result);
         }
+
+        [HttpPut("UpdateLastBooking/idUser")]
+
+        public ActionResult UpdateLastBooking(int idUser)
+        {
+            int idBookingLast = _bookingService.GetLastBookingUser(idUser);
+            try
+            {
+                _bookingService.ChangeStatus(idBookingLast, "1");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetCreateTimeBook")]
+        public ActionResult GetCreateTimeBook()
+        {
+            var result = _bookingService.GetCreatedBooking();
+
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+        [HttpGet("PaymentAcceptable/{dateCreate}/{status}")]
+        public bool PaymentAcceptable(DateTime date,string status)
+        {
+            var result = _bookingService.PaymentAcceptable(date, status);
+
+            return result;
+        }
+
         #endregion
-        
+
         #region KHUYENHTB - USER-INFORMATION/VIEW BOOKING HISTORY/CANCEL BOOKING       
         [HttpGet("GetUserBookingHistory")]
         public ActionResult GetUserBookingHistory(int userId)

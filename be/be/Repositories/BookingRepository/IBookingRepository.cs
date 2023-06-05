@@ -17,5 +17,8 @@ namespace be.Repositories.BookingRepository
         object AddBooking(Data data);
         bool isBooking(Data data);
 
+        int GetLastBookingUser(int idUser);
+        IEnumerable<dynamic> GetCreatedBooking();
+        bool PaymentAcceptable(DateTime bookingDate, string status);
     }
 }

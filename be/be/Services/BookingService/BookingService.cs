@@ -30,6 +30,23 @@ namespace be.Services
             _bookingRepo.UpdateBooking(booking);
         }
 
+        #region KhoaLHN - Get last booking when payment and SetTime Pay
+        public int GetLastBookingUser(int idUser)
+        {
+            return _bookingRepo.GetLastBookingUser(idUser);
+        }
+
+        public IEnumerable<dynamic> GetCreatedBooking()
+        {
+            return _bookingRepo.GetCreatedBooking();
+        }
+
+        public bool PaymentAcceptable(DateTime bookingDate, string status)
+        {
+            return _bookingRepo.PaymentAcceptable(bookingDate, status);
+        }
+        #endregion
+
         #region KHUYENHTB - VIEW BOOKING HISTORIES
         public void DeleteBooking(int bookingId)
         {
@@ -84,6 +101,7 @@ namespace be.Services
         {
             return _bookingRepo.isBooking(data);
         }
+        
         #endregion
     }
 }

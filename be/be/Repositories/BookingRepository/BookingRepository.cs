@@ -1,7 +1,10 @@
 ﻿using be.Models;
 using be.Repositories.RoomRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace be.Repositories.BookingRepository
 {
@@ -16,6 +19,25 @@ namespace be.Repositories.BookingRepository
             _roomRepository = roomRepository;
         }
 
+        public int GetLastBookingUser(int idUser)
+        {
+            var getLastBooking = (from b in _context.Bookings
+                                  join bd in _context.BookingDetails on b.BookingId equals bd.BookingId
+                                  where b.UserId == idUser
+                                  select b.BookingId).OrderByDescending(x => x).FirstOrDefault();
+
+            return getLastBooking;
+        }
+
+        public IEnumerable<dynamic> GetCreatedBooking()
+        {
+            var get = (from b in _context.Bookings
+                       where b.Status == "0" /*&& (DateTime.Now.Hour - b.CreateDate.Hour) <= 1*/
+                       select new { StartTime = b.CreateDate/*.Ticks / TimeSpan.TicksPerMillisecond*/,b.BookingId });
+
+            return get.ToList();
+        }
+
         public object AddBooking(Data data)
         {
             if (isBooking(data))
@@ -27,10 +49,6 @@ namespace be.Repositories.BookingRepository
                 newData.booking.CreateDate = DateTime.Now;
                 newData.booking.CheckIn = data.booking.CheckIn.AddDays(1);
                 newData.booking.CheckOut = data.booking.CheckOut.AddDays(1);
-
-
-
-
                 newData.booking.TotalPrice = data.booking.TotalPrice;
                 newData.booking.Status = data.booking.Status;
                 newData.listBooking = data.listBooking.ToList();
@@ -263,6 +281,22 @@ namespace be.Repositories.BookingRepository
             DateTime checkInDateTime = checkIn.AddHours(14);
             double remainHoursBeforeCheckInDate = (checkInDateTime - currentDateTime).TotalHours;
             if (remainHoursBeforeCheckInDate > 24 && status != "2")
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// check user can pay or not = user can pay in 1 hours
+        /// </summary>
+        /// <param name="bookingDate"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public bool PaymentAcceptable(DateTime bookingDate, string status)
+        {
+            DateTime currentDateTime = DateTime.Now;
+            double remainHoursBeforeExpiredPayTime = (currentDateTime - bookingDate).TotalHours;
+            if (remainHoursBeforeExpiredPayTime <= 1 && status == "0")
             {
                 return true;
             }

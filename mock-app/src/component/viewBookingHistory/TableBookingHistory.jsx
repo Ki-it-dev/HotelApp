@@ -20,6 +20,7 @@ import {
 import axios from 'axios';
 import '../../assests/css/viewBookingHistory.css'
 
+
 //#region CONSTANT
 const { Title } = Typography;
 
@@ -130,10 +131,11 @@ const TableBookingHistory = (props) => {
     //#endregion
   
     const handleCancelBooking = (bookingId) => {
+        var user = JSON.parse(sessionStorage.getItem('user'))
         const url = process.env.REACT_APP_SERVER_HOST + 'Guest/CancelBooking';
         axios.put(url, {
             bookingId: bookingId,
-            userId: 1
+            userId: user.userId
         }, {
             headers: {
                 accept: 'application/json'

@@ -8,7 +8,7 @@ export default function HomePage() {
     const [data, setData] = useState([])
     const { Meta } = Card;
 
-    console.log(data);
+    // console.log(data);
 
     const contentStyle = {
         height: '800px',
@@ -49,8 +49,8 @@ export default function HomePage() {
         <Fragment>
             <Header />
             <main>
-                <Carousel style={{ marginTop: "4rem" }} autoplay autoplaySpeed={2000}>
-                    <div >
+                <Carousel style={{ marginTop: "4rem" }} autoplay autoplaySpeed={3000}>
+                    {/* <div >
                         <div style={contentStyle} className="view" >
                             <img style={imgStyle} src="img/aerial-shot-aria-hotel-las-vegas-min.jpg" />
                             <div style={textHeader}>
@@ -68,14 +68,14 @@ export default function HomePage() {
                                     <p className="text-white">redefined at the most afforrdable rates.</p>
                                 </h6>
                                 <a href="#bookNowRoom" className="btnBookNow fontSize20">
-                                    {/* <HomeOutlined className="mr-1" /> */}
                                     Book now</a>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <div>
                         <h3 style={contentStyle}>
-                            <img style={imgStyle} src="img/swimming-pool-with-relaxing-seats-min.jpg" />
+                            {/* <img style={imgStyle} src="img/swimming-pool-with-relaxing-seats-min.jpg" /> */}
+                            <img style={imgStyle} src="img/1.jpg" />
                             <div style={textHeader}>
                                 <h3 className="text-white"
                                     style={{ fontSize: 40 }}
@@ -98,7 +98,8 @@ export default function HomePage() {
                     </div>
                     <div>
                         <h3 style={contentStyle}>
-                            <img style={imgStyle} src="img/sunglasses-burgers-juice-table-with-exotic-lunch-swimming-pool-min.jpg" />
+                            {/* <img style={imgStyle} src="img/sunglasses-burgers-juice-table-with-exotic-lunch-swimming-pool-min.jpg" /> */}
+                            <img style={imgStyle} src="img/room1.jpg" />
                             <div style={textHeader}>
                                 <h3 className="text-white"
                                     style={{ fontSize: 40 }}
@@ -121,7 +122,8 @@ export default function HomePage() {
                     </div>
                     <div>
                         <h3 style={contentStyle}>
-                            <img style={imgStyle} src="img/luxury-dinner-table-hotel-min.jpg" />
+                            {/* <img style={imgStyle} src="img/luxury-dinner-table-hotel-min.jpg" /> */}
+                            <img style={imgStyle} src="img/room3.jpg" />
                             <div style={textHeader}>
                                 <h3 className="text-white"
                                     style={{ fontSize: 40 }}
