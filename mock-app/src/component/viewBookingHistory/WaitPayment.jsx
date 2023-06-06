@@ -7,8 +7,10 @@ export default function WaitPayment(props) {
 
     const GetCreatedBooking = async () => {
         // event.preventDefault();
+        var user = JSON.parse(sessionStorage.getItem('user'))
+
         await axios
-            .get(process.env.REACT_APP_SERVER_HOST + "Guest/GetCreateTimeBook")
+            .get(process.env.REACT_APP_SERVER_HOST + "Guest/GetCreateTimeBook/idUser?idUser=" + user.userId)
             .then((result) => {
                 // let arr = [];
                 // result.data.map((item) => arr.push(item.startTime));
@@ -43,8 +45,6 @@ export default function WaitPayment(props) {
     }, [])
 
     useEffect(() => {
-        // console.log(data, 'useEffect');
-
         for (let index = 0; index < data.length; index++) {
             const element = data[index].startTime;
 
@@ -55,43 +55,32 @@ export default function WaitPayment(props) {
             localStorage.setItem("startTime_" + index, mileSeconds);
             // Khởi tạo biến lưu trữ thời gian bắt đầu
             var startTime = localStorage.getItem("startTime_" + index);
-
             // Khởi tạo biến lưu trữ thời gian chờ thanh toán (ví dụ 60 phút)
             var timeout = 60 * 60 * 1000; // tính bằng mili giây
             // Hàm kiểm tra thời gian chờ thanh toán
             function checkPaymentTimeout() {
                 // Lấy thời gian hiện tại
                 var currentTime = new Date().getTime();
-                // console.log(currentTime);
                 // Tính thời gian đã trôi qua kể từ lần bắt đầu
                 var elapsed = currentTime - startTime
-                // console.log('Time out: ', timeout);
-                // console.log('Elapsed: ', elapsed);
-                // console.log('Current Time: ', currentTime);
-                // console.log('Start Time: ', startTime);
-
                 // Nếu thời gian đã trôi qua lớn hơn hoặc bằng thời gian chờ thanh toán
                 if (elapsed >= timeout) {
                     // Xóa giá trị startTime khỏi localStorage
                     localStorage.removeItem("startTime_" + index);
                     // Thực hiện hành động khi hết thời gian chờ thanh toán
-                    // alert("Hết thời gian thanh toán")
                     handleCancelBooking(data[index].bookingId)
-
+                    // console.log('cancelBooking');
                 } else {
                     // Nếu chưa hết thời gian chờ thanh toán, tính lại khoảng còn lại
                     var remaining = timeout - elapsed;
-                    // console.log("Remaining: startTime_" + index, remaining);
                     // Gọi lại hàm kiểm tra sau khoảng còn lại
                     setTimeout(checkPaymentTimeout, remaining);
                 }
             }
-            // Gọi hàm kiểm tra lần đầu tiên khi load trang
+            //Gọi hàm kiểm tra lần đầu tiên khi load trang
             checkPaymentTimeout();
         }
     });
-
-
 
     return (
         <>

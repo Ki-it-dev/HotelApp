@@ -19,6 +19,14 @@ public partial class Booking
 
     public string Status { get; set; } = null!;
 
+    public decimal? PriceDifference { get; set; }
+
+    public DateTime? UpdateDate { get; set; }
+
+    public DateTime? UpdateCheckIn { get; set; }
+
+    public DateTime? UpdateCheckOut { get; set; }
+
     public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
 
     public virtual User User { get; set; } = null!;

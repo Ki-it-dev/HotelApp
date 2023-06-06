@@ -30,23 +30,6 @@ namespace be.Services
             _bookingRepo.UpdateBooking(booking);
         }
 
-        #region KhoaLHN - Get last booking when payment and SetTime Pay
-        public int GetLastBookingUser(int idUser)
-        {
-            return _bookingRepo.GetLastBookingUser(idUser);
-        }
-
-        public IEnumerable<dynamic> GetCreatedBooking()
-        {
-            return _bookingRepo.GetCreatedBooking();
-        }
-
-        public bool PaymentAcceptable(DateTime bookingDate, string status)
-        {
-            return _bookingRepo.PaymentAcceptable(bookingDate, status);
-        }
-        #endregion
-
         #region KHUYENHTB - VIEW BOOKING HISTORIES
         public void DeleteBooking(int bookingId)
         {
@@ -68,9 +51,19 @@ namespace be.Services
             return _bookingRepo.GetBookingHistories(userId);
         }
 
-        public List<Room> GetRoomsByBookingId(int bookingId)
+        public IEnumerable<dynamic> GetCreatedBooking(int userId)
         {
-            return _bookingRepo.GetRoomsByBookingId(bookingId);
+            return _bookingRepo.GetCreatedBooking(userId);
+        }
+
+        public IEnumerable<dynamic> GetBookingDatesOfUser(int userId)
+        {
+            return _bookingRepo.GetBookingDatesOfUser(userId);
+        }
+
+        public int GetLastBookingUser(int idBooking)
+        {
+            return _bookingRepo.GetLastBookingUser(idBooking);
         }
         #endregion
 
@@ -85,9 +78,9 @@ namespace be.Services
             _bookingRepo.ChangeStatus(id, status);
         }
 
-        public void UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status)
+        public void UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status, decimal totalPrice)
         {
-            _bookingRepo.UpdateBooking(id, checkIn, checkOut, status);
+            _bookingRepo.UpdateBooking(id, checkIn, checkOut, status, totalPrice);
         }
         #endregion
 
@@ -101,7 +94,6 @@ namespace be.Services
         {
             return _bookingRepo.isBooking(data);
         }
-        
         #endregion
     }
 }

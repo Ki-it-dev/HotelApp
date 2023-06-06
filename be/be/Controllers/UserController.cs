@@ -16,12 +16,12 @@ namespace be.Controllers
 
     public class UserController : ControllerBase
     {
-        private readonly IUserService UserService;
-        private readonly DbFourSeasonHotelContext Db;
+        private readonly IUserService _userService;
+        private readonly DbFourSeasonHotelContext _db;
         public UserController(DbFourSeasonHotelContext db, IUserService userService)
         {
-            this.Db = db;
-            this.UserService = userService;
+            this._db = db;
+            this._userService = userService;
         }
 
         #region HIEUVMH15 - LOGIN/REGISTER/CREATE TOKEN
@@ -30,11 +30,11 @@ namespace be.Controllers
         {
             try
             {
-                if(token == "")
+                if (token == "")
                 {
                     return BadRequest();
                 }
-                var result = await UserService.GetInfo(token);
+                var result = await _userService.GetInfo(token);
                 return Ok(result);
             }
             catch
@@ -42,6 +42,7 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
+
         [HttpGet("search")]
         public async Task<ActionResult> GetUserByEmail(string email)
         {
@@ -55,6 +56,7 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
+
         [HttpPost("forgot")]
         public async Task<ActionResult> ForgotPassword([FromBody] string email)
         {
@@ -76,7 +78,7 @@ namespace be.Controllers
         {
             try
             {
-                var user = UserService.GetUserInformation(userId);
+                var user = _userService.GetUserInformation(userId);
                 return Ok(user);
 
             }
@@ -91,7 +93,7 @@ namespace be.Controllers
         {
             try
             {
-                var updateData = UserService.UpdateUser(user);
+                var updateData = _userService.UpdateUser(user);
                 return Ok(updateData);
             }
             catch (Exception ex)

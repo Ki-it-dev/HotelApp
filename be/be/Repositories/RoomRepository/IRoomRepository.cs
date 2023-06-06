@@ -16,5 +16,7 @@ namespace be.Repositories.RoomRepository
         IEnumerable<dynamic> GetAllRoomCategories(int id);
         dynamic GetAvailableRoomsByType(string categoryName, DateTime sd, DateTime ed);
         IEnumerable<Room> GetAllRoom();
+
+        dynamic GetRoomsByBookingId(int bookingId);
     }
 }

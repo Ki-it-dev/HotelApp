@@ -72,5 +72,10 @@ namespace be.Services
         {
             return _roomRepo.GetRooms(roomIds);
         }
+
+        public List<Room> GetRoomsByBookingId(int bookingId)
+        {
+            return _roomRepo.GetRoomsByBookingId(bookingId);
+        }
     }
 }

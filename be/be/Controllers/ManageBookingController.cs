@@ -55,8 +55,8 @@ namespace be.Controllers
                                               where bb.CreateDate == k.Key.CreateDate && bb.CheckIn == k.Key.CheckIn && bb.CheckOut == k.Key.CheckOut
                                               select u.Phone).FirstOrDefault(),
                                      createDate = k.Key.CreateDate.ToString("yyyy-MM-dd"),
-                                     checkIn = k.Key.CheckIn.ToString("yyyy-MM-dd"),
-                                     checkOut = k.Key.CheckOut.ToString("yyyy-MM-dd"),
+                                     //checkIn = k.Key.CheckIn.ToString("yyyy-MM-dd"),
+                                     //checkOut = k.Key.CheckOut.ToString("yyyy-MM-dd"),
                                      Status = (from bb in _context.Bookings
                                                where bb.CreateDate == k.Key.CreateDate && bb.CheckIn == k.Key.CheckIn && bb.CheckOut == k.Key.CheckOut
                                                select bb.Status).FirstOrDefault(),
@@ -70,6 +70,18 @@ namespace be.Controllers
                                                  select rr.RoomName),
                                      Style = (k.Key.CheckOut < DateTime.Now) ? "none" : "",
                                      Disable = (k.Key.CheckIn < DateTime.Now && k.Key.CheckOut > DateTime.Now) ? true : false,
+                                     PriceDifference = (from bb in _context.Bookings
+                                                        where bb.CreateDate == k.Key.CreateDate && bb.CheckIn == k.Key.CheckIn && bb.CheckOut == k.Key.CheckOut
+                                                        select bb.PriceDifference).FirstOrDefault(),
+                                     UpdateDate = (from bb in _context.Bookings
+                                                   where bb.CreateDate == k.Key.CreateDate && bb.CheckIn == k.Key.CheckIn && bb.CheckOut == k.Key.CheckOut
+                                                   select bb.UpdateDate != null ? bb.UpdateDate.Value.ToString("yyyy-MM-dd") : null).FirstOrDefault(),
+                                     checkIn = (from bb in _context.Bookings
+                                                where bb.CreateDate == k.Key.CreateDate && bb.CheckIn == k.Key.CheckIn && bb.CheckOut == k.Key.CheckOut
+                                                select bb.UpdateCheckIn != null ? bb.UpdateCheckIn.Value.ToString("yyyy-MM-dd") : k.Key.CheckIn.ToString("yyyy-MM-dd")).FirstOrDefault(),
+                                     checkOut = (from bb in _context.Bookings
+                                                 where bb.CreateDate == k.Key.CreateDate && bb.CheckIn == k.Key.CheckIn && bb.CheckOut == k.Key.CheckOut
+                                                 select bb.UpdateCheckOut != null ? bb.UpdateCheckOut.Value.ToString("yyyy-MM-dd") : k.Key.CheckOut.ToString("yyyy-MM-dd")).FirstOrDefault(),
                                  };
             return Ok(bookingOfGuest);
         }
@@ -91,13 +103,13 @@ namespace be.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status)
+        public async Task<ActionResult> UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status, decimal totalPrice)
         {
             if (_bookingService.GetBooking(id) == null)
             {
                 return BadRequest();
             }
-            _bookingService.UpdateBooking(id, checkIn, checkOut, status);
+            _bookingService.UpdateBooking(id, checkIn, checkOut, status, totalPrice);
             return Ok();
         }
     }

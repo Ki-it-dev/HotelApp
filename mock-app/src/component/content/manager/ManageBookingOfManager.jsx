@@ -37,7 +37,7 @@ import {
     Select,
     notification,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, DollarOutlined} from "@ant-design/icons";
 import { DatePicker, Space, Button } from "antd";
 import dayjs from "dayjs";
 
@@ -57,6 +57,22 @@ export default function ManageBookingOfManager() {
                 return "Cancel";
             }
         };
+        const refundOrUnpaidLabel = (priceDifference) => {
+            if(priceDifference < 0){
+                return "Refund"
+            } else{
+                return "Unpaid"
+            } 
+        } 
+        const priceDifferenceChildren = (priceDifference) => {
+            if (priceDifference < 0){
+                return priceDifference * (-1)
+            } else if (priceDifference > 0) {
+                return priceDifference
+            } else {
+                return "0";
+            }
+        }
         return (
             <Card
                 style={{
@@ -94,10 +110,16 @@ export default function ManageBookingOfManager() {
                             color: "black",
                         },
                         {
-                            label: "Total Price",
+                            label: "Paid",
                             children: "$" + data.totalPrice,
                             dot: <WalletOutlined />,
                             color: "green",
+                        },
+                        {
+                            label: refundOrUnpaidLabel(data.priceDifference),
+                            children: "$" + priceDifferenceChildren(data.priceDifference),
+                            dot: <DollarOutlined />,
+                            color: "purple",
                         },
                         {
                             label: "Booking Status",
@@ -384,6 +406,7 @@ export default function ManageBookingOfManager() {
         editCheckOut: "",
         editStatus: "",
         editDisable: "",
+        editTotalPrice: "",
     });
 
     //useState input error cho form Modal
@@ -433,8 +456,17 @@ export default function ManageBookingOfManager() {
         const cleanedUrl = url.replace(/`/g, "");
         // const url = `https://localhost:7023/api/ManageBooking/${bookingId}?status=${status}`
 
+        const displayTitle = (record) => {
+            if(record.priceDifference > 0) {
+                return "Has customer already paid: $" + record.priceDifference + "?"
+            } else if (record.priceDifference < 0) {
+                return "Has hotel already refunded: $" + record.priceDifference*(-1) + "?"
+            } else {
+                return "Has customer already paid: $" + record.totalPrice + "?"
+            }
+        } 
         Modal.confirm({
-            title: "Has customer already paid ?",
+            title: displayTitle(record),
             okText: "Confirm",
             okType: "default",
             onOk: () => {
@@ -462,6 +494,7 @@ export default function ManageBookingOfManager() {
             editCheckOut: record.checkOut,
             editStatus: statusString,
             editDisable: record.disable,
+            editTotalPrice: record.totalPrice,
         });
         console.log(statusString);
     };
@@ -479,7 +512,9 @@ export default function ManageBookingOfManager() {
             "&checkOut=" +
             formatDate(editData.editCheckOut) +
             "&status=" +
-            "0";
+            "0" + 
+            "&totalPrice="
+            + editData.editTotalPrice;
         const cleanedUrl = url.replace(/`/g, "");
         handleValidationDate(editData, errors);
         if (Object.keys(errors).length === 0) {

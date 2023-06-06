@@ -1,10 +1,7 @@
 ﻿using be.Models;
 using be.Repositories.RoomRepository;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 
 namespace be.Repositories.BookingRepository
 {
@@ -19,25 +16,6 @@ namespace be.Repositories.BookingRepository
             _roomRepository = roomRepository;
         }
 
-        public int GetLastBookingUser(int idUser)
-        {
-            var getLastBooking = (from b in _context.Bookings
-                                  join bd in _context.BookingDetails on b.BookingId equals bd.BookingId
-                                  where b.UserId == idUser
-                                  select b.BookingId).OrderByDescending(x => x).FirstOrDefault();
-
-            return getLastBooking;
-        }
-
-        public IEnumerable<dynamic> GetCreatedBooking()
-        {
-            var get = (from b in _context.Bookings
-                       where b.Status == "0" /*&& (DateTime.Now.Hour - b.CreateDate.Hour) <= 1*/
-                       select new { StartTime = b.CreateDate/*.Ticks / TimeSpan.TicksPerMillisecond*/,b.BookingId });
-
-            return get.ToList();
-        }
-
         public object AddBooking(Data data)
         {
             if (isBooking(data))
@@ -47,6 +25,8 @@ namespace be.Repositories.BookingRepository
                 newData.listBooking = new List<BookingDetail> { new BookingDetail() };
                 newData.booking.UserId = data.booking.User.UserId;
                 newData.booking.CreateDate = DateTime.Now;
+                newData.booking.UpdateDate = DateTime.Now;
+                newData.booking.PriceDifference = 0;
                 newData.booking.CheckIn = data.booking.CheckIn.AddDays(1);
                 newData.booking.CheckOut = data.booking.CheckOut.AddDays(1);
                 newData.booking.TotalPrice = data.booking.TotalPrice;
@@ -64,7 +44,9 @@ namespace be.Repositories.BookingRepository
                 return new
                 {
                     status = 200,
-                    message = "Booking success!"
+                    bookingId = newData.booking.BookingId,
+                    message = "Booking success!",
+                    createdDate = newData.booking.CreateDate,
                 };
             }
             return new
@@ -78,6 +60,18 @@ namespace be.Repositories.BookingRepository
         {
             var updateBooking = _context.Bookings.SingleOrDefault(x => x.BookingId == id);
             updateBooking.Status = status;
+            if (updateBooking.PriceDifference > 0)
+            {
+                var updateTotalPrice = updateBooking.TotalPrice + updateBooking.PriceDifference;
+                updateBooking.TotalPrice = (decimal)updateTotalPrice;
+                updateBooking.PriceDifference = 0;
+            }
+            else
+            {
+                var updateTotalPrice = updateBooking.TotalPrice - (updateBooking.PriceDifference * (-1));
+                updateBooking.TotalPrice = (decimal)updateTotalPrice;
+                updateBooking.PriceDifference = 0;
+            }
             try
             {
                 _context.SaveChanges();
@@ -128,7 +122,10 @@ namespace be.Repositories.BookingRepository
                                         checkOut = bookings.CheckOut.ToString("yyyy-MM-dd"),
                                         totalPrice = CurrencyFormat(bookings.TotalPrice),
                                         status = bookings.Status,
-                                        cancelAvailable = CancelAcceptable(bookings.CheckIn, bookings.Status)
+                                        cancelAvailable = CancelAcceptable(bookings.CheckIn, bookings.Status),
+                                        priceGap = bookings.PriceDifference,
+                                        listRooms = _roomRepository.GetRoomsByBookingId(bookings.BookingId),
+                                        totalPriceNotFormat = bookings.TotalPrice
                                     }).Distinct().OrderByDescending(x => x.key).ToList();
             if (!String.IsNullOrEmpty(bookingDate))
             {
@@ -186,21 +183,14 @@ namespace be.Repositories.BookingRepository
                                         checkOut = bookings.CheckOut.ToString("yyyy-MM-dd"),
                                         totalPrice = CurrencyFormat(bookings.TotalPrice),
                                         status = bookings.Status,
-                                        cancelAvailable = CancelAcceptable(bookings.CheckIn, bookings.Status)
+                                        cancelAvailable = CancelAcceptable(bookings.CheckIn, bookings.Status),
+                                        priceGap = bookings.PriceDifference,
+                                        listRooms = _roomRepository.GetRoomsByBookingId(bookings.BookingId),
+                                        totalPriceNotFormat = bookings.TotalPrice
                                     }).Distinct().OrderByDescending(x => x.key).ToList();
 
             return bookingHistories;
-        }
-
-        public List<Room> GetRoomsByBookingId(int bookingId)
-        {
-            var rooms = (from room in _context.Rooms
-                         join bookingDetail in _context.BookingDetails
-                         on room.RoomId equals bookingDetail.RoomId
-                         where bookingDetail.BookingId == bookingId
-                         select room).ToList();
-            return rooms;
-        }
+        }        
 
         public bool isBooking(Data data)
         {
@@ -225,11 +215,11 @@ namespace be.Repositories.BookingRepository
             _context.SaveChanges();
         }
 
-        public void UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status)
+        public void UpdateBooking(int id, DateTime checkIn, DateTime checkOut, string status, decimal totalPrice)
         {
             var updateBooking = _context.Bookings.SingleOrDefault(x => x.BookingId == id);
-            updateBooking.CheckIn = checkIn;
-            updateBooking.CheckOut = checkOut;
+            //updateBooking.CheckIn = checkIn;
+            //updateBooking.CheckOut = checkOut;
             updateBooking.Status = status;
             DateTime start = checkIn;
             DateTime end = checkOut;
@@ -248,7 +238,25 @@ namespace be.Repositories.BookingRepository
                 }
 
             }
-            updateBooking.TotalPrice = updatePrice;
+            if (totalPrice < updatePrice)
+            {
+                updateBooking.TotalPrice = totalPrice;
+                updateBooking.PriceDifference = updatePrice - totalPrice;
+            }
+            else if (totalPrice > updatePrice)
+            {
+                updateBooking.TotalPrice = totalPrice;
+                updateBooking.PriceDifference = updatePrice - totalPrice;
+            }
+            else
+            {
+                updateBooking.TotalPrice = totalPrice;
+                updateBooking.PriceDifference = 0;
+                updateBooking.Status = "1";
+            }
+            updateBooking.UpdateCheckIn = checkIn;
+            updateBooking.UpdateCheckOut = checkOut;
+            updateBooking.UpdateDate = DateTime.Now;
             try
             {
                 _context.SaveChanges();
@@ -257,6 +265,7 @@ namespace be.Repositories.BookingRepository
             {
                 throw;
             }
+
         }
 
         /// <summary>
@@ -286,21 +295,50 @@ namespace be.Repositories.BookingRepository
             }
             return false;
         }
+
         /// <summary>
         /// check user can pay or not = user can pay in 1 hours
         /// </summary>
         /// <param name="bookingDate"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public bool PaymentAcceptable(DateTime bookingDate, string status)
+        public static bool PaymentAcceptable(DateTime bookingDate, string status)
         {
             DateTime currentDateTime = DateTime.Now;
             double remainHoursBeforeExpiredPayTime = (currentDateTime - bookingDate).TotalHours;
-            if (remainHoursBeforeExpiredPayTime <= 1 && status == "0")
+            if(remainHoursBeforeExpiredPayTime <= 1 && status == "0")
             {
                 return true;
             }
             return false;
+        }
+
+        public IEnumerable<dynamic> GetCreatedBooking(int userId)
+        {
+            var get = (from b in _context.Bookings
+                       where b.Status == "0" && b.UserId == userId
+                       select new { StartTime = b.CreateDate, b.BookingId });
+
+            return get.ToList();
+        }
+
+        public IEnumerable<dynamic> GetBookingDatesOfUser(int userId)
+        {
+            var get = (from b in _context.Bookings
+                       where b.Status == "0" && b.UserId == userId
+                       select new { b.UpdateDate, b.BookingId });
+
+            return get.ToList();
+        }
+
+        public int GetLastBookingUser(int idBooking)
+        {
+            var getLastBooking = (from b in _context.Bookings
+                                  join bd in _context.BookingDetails on b.BookingId equals bd.BookingId
+                                  where b.BookingId == idBooking && b.Status == "0"
+                                  select b.BookingId).FirstOrDefault();
+
+            return getLastBooking;
         }
     }
 }

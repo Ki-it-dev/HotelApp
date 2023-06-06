@@ -60,11 +60,19 @@ namespace be.Controllers
             return Ok(result);
         }
 
-        [HttpPut("UpdateLastBooking/idUser")]
-
-        public ActionResult UpdateLastBooking(int idUser)
+        [HttpGet("GetCreateTimeBook")]
+        public ActionResult GetCreateTimeBook(int userId)
         {
-            int idBookingLast = _bookingService.GetLastBookingUser(idUser);
+            var result = _bookingService.GetCreatedBooking(userId);
+
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateLastBooking/idBooking")]
+        public ActionResult UpdateLastBooking(int idBooking)
+        {
+            int idBookingLast = _bookingService.GetLastBookingUser(idBooking);
             try
             {
                 _bookingService.ChangeStatus(idBookingLast, "1");
@@ -75,25 +83,6 @@ namespace be.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpGet("GetCreateTimeBook")]
-        public ActionResult GetCreateTimeBook()
-        {
-            var result = _bookingService.GetCreatedBooking();
-
-            if (result == null)
-                return NotFound();
-            return Ok(result);
-        }
-
-        [HttpGet("PaymentAcceptable/{dateCreate}/{status}")]
-        public bool PaymentAcceptable(DateTime date,string status)
-        {
-            var result = _bookingService.PaymentAcceptable(date, status);
-
-            return result;
-        }
-
         #endregion
 
         #region KHUYENHTB - USER-INFORMATION/VIEW BOOKING HISTORY/CANCEL BOOKING       
@@ -138,6 +127,15 @@ namespace be.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet("GetBookingDatesOfUser")]
+        public ActionResult GetBookingDatesOfUser(int userId)
+        {
+            var result = _bookingService.GetBookingDatesOfUser(userId);
+
+            if (result == null) return NotFound();
+            return Ok(result);
         }
         #endregion
 

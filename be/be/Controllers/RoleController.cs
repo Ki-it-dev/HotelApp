@@ -13,17 +13,17 @@ namespace be.Controllers
     [Route("api/role")]
     public class RoleController : ControllerBase
     {
-        private readonly IRoleService RoleService;
+        private readonly IRoleService _roleService;
 
         public RoleController(IRoleService roleService)
         {
-            RoleService = roleService;
+            _roleService = roleService;
         }
 
         [HttpGet("all")]
         public async Task<ActionResult> GetAllRole()
         {
-            var data = RoleService.GetAllRoles();
+            var data = _roleService.GetAllRoles();
             return Ok(new
             {
                 status = 200,
@@ -33,7 +33,7 @@ namespace be.Controllers
         [HttpGet]
         public async Task<ActionResult> GetRole(int id)
         {
-            var role = RoleService.GetRole(id);
+            var role = _roleService.GetRole(id);
             if (role == null)
             {
                 return Ok(new
@@ -55,7 +55,7 @@ namespace be.Controllers
         {
             try
             {
-                RoleService.AddRole(role);
+                _roleService.AddRole(role);
                 return Ok(new
                 {
                     status = 200,
@@ -73,7 +73,7 @@ namespace be.Controllers
         {
             try
             {
-                RoleService.DeleteRole(id);
+                _roleService.DeleteRole(id);
                 return Ok(new
                 {
                     status = 200,

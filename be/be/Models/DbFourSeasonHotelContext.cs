@@ -44,8 +44,12 @@ public partial class DbFourSeasonHotelContext : DbContext
             entity.Property(e => e.CheckIn).HasColumnType("datetime");
             entity.Property(e => e.CheckOut).HasColumnType("datetime");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.PriceDifference).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Status).HasMaxLength(100);
             entity.Property(e => e.TotalPrice).HasColumnType("money");
+            entity.Property(e => e.UpdateCheckIn).HasColumnType("datetime");
+            entity.Property(e => e.UpdateCheckOut).HasColumnType("datetime");
+            entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.User).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.UserId)

@@ -97,7 +97,6 @@ export default function BookingPage() {
             setBookingRoomIds([...bookingRoomIds, roomId])
         }
     }
-
     const handleRemove = (roomId) => {
         setBookingRoomIds(bookingRoomIds.filter(id => id != roomId))
     }
@@ -115,7 +114,7 @@ export default function BookingPage() {
         }
         else {
             setBookingRooms([])
-        }
+        }    
     }
 
     useEffect(() => {
@@ -137,7 +136,6 @@ export default function BookingPage() {
             <div className='list_sticky'>
                 <BookingList data={bookingRooms} handleRemove={handleRemove} date={current} />
             </div>
-
 
             {
                 rooms.map(room => {

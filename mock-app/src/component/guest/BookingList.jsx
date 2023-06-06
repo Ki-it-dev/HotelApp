@@ -47,7 +47,10 @@ const BookingList = (props) => {
         rooms: data,
         date: date,
         totalPrice: totalPrice(),
+        bookingId : null,
     }
+
+    // console.log(booking_detail_data);
 
     const obj = encodeURIComponent(JSON.stringify(booking_detail_data));
 

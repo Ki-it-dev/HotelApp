@@ -10,7 +10,6 @@ import axios from "axios";
 import Item from "antd/es/list/Item";
 
 export default function BookingDetail() {
-
     useEffect(() => {
         // 👇️ scroll to top on page load
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -26,66 +25,63 @@ export default function BookingDetail() {
         currency: "USD",
     });
 
+    var createBookingId = ''
+    var createdDate = ''
 
     const CreateBooking = () => {
-
         const user = JSON.parse(localStorage.getItem('user'));
-
-        //getDataBookingLast(user.userId)
-
         const roomIds = []
 
-        data.rooms.forEach(i => {
-            roomIds.push({
-                roomId: i.roomInfo.roomId
+        if (data.bookingId == null) {
+            data.rooms.forEach(i => {
+                roomIds.push({
+                    roomId: i.roomInfo.roomId
+                });
             });
-        });
+            const bookingData = {
+                booking: {
+                    checkIn: data.date[0],
+                    checkOut: data.date[1],
+                    totalPrice: data.totalPrice,
+                    status: "0",
+                    user: {
+                        userId: user.userId,
+                        email: "",
+                        status: "",
+                        password: ""
+                    }
+                },
+                listBooking: roomIds
+            }
+            const url = process.env.REACT_APP_SERVER_HOST + 'booking/order';
 
-        const bookingData = {
-
-            booking: {
-
-                checkIn: data.date[0],
-
-                checkOut: data.date[1],
-
-                totalPrice: data.totalPrice,
-
-                status: "0",
-
-                user: {
-
-                    userId: user.userId,
-
-                    email: "",
-
-                    status: "",
-
-                    password: ""
-
-                }
-
-            },
-            listBooking: roomIds
-
+            axios.post(url, bookingData)
+                .then((res) => {
+                    if (res.data.message == "Booking success!") {
+                        createBookingId = res.data.bookingId;
+                        createdDate = res.data.createdDate;
+                        // console.log(bookingId,'Booking Id');
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         }
-
-        const url = process.env.REACT_APP_SERVER_HOST + 'booking/order';
-
-        axios.post(url, bookingData)
-            .then((res) => {
-                if (res.data.message == "Booking success!") {
-                    //console.log("Wait booking");
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            });
     }
 
     const handleChangeStatus = () => {
-        const userId = JSON.parse(localStorage.getItem('user')).userId;
-        const url = process.env.REACT_APP_SERVER_HOST + 'Guest/UpdateLastBooking/idUser?idUser=' + userId
+        const updateBooking = data.bookingId
+        const type = data.type
+
+        let url = process.env.REACT_APP_SERVER_HOST + 'Guest/UpdateLastBooking/idBooking?idBooking='
+
+        if (type == 'Update') {
+            url += updateBooking
+        }
+        else {
+            url += createBookingId
+        }
+
         axios.put(url)
             .then((result) => {
                 notification.success({
@@ -117,21 +113,22 @@ export default function BookingDetail() {
                     <p>
                         {props.data.roomInfo.description}
                     </p>
-
                     <div className="booking_row" style={{ float: 'right' }}>
                         <h3>{USD.format(props.data.roomInfo.price)}</h3>
                     </div>
                 </Card>
-
             </div>
         </>
     );
 
-    const Payment = (props) => {
-        const totalPrice = props.data.totalPrice
-        // props.data.rooms.map(item => console.log(item.roomInfo.roomId))
-        // console.log(props);
+    const handleCancelPayment = () => {
+        // console.log('cancel');
+        localStorage.setItem("startTime_" + createBookingId, new Date(createdDate).getTime());
+        window.location.href = 'http://localhost:3000/view-booking-history';
+    }
 
+    const Payment = (props) => {
+        const totalPrice = props.data.totalPrice;
         return (
             <>
                 <div className="payment">
@@ -155,54 +152,40 @@ export default function BookingDetail() {
                                     ]
                                 })
                             }}
-
-                            onCancel={() => window.location.href = 'http://localhost:3000/booking'}
-
+                            onCancel={handleCancelPayment}
                             onClick={() => CreateBooking()}
-
                             onApprove={async (data, actions) => {
                                 const order = await actions.order.capture();
-                                //console.log(order);
                                 if (order.status == 'COMPLETED') {
-                                    //CreateBooking();
-                                    handleChangeStatus()
-                                    // console.log("Update book");
+                                    handleChangeStatus();
                                 }
                             }}
                         />
                     </PayPalScriptProvider>
                 </div>
-
             </>
         )
     }
-
     return (
         <Fragment>
             <HeaderGuest />
-
             <div className='list_sticky'>
                 <Receipt data={data} />
             </div>
-
             <div className="room_detail_list">
                 <Link style={{ marginLeft: '20px', }} to="/booking">
                     <button className="btnBookNow" style={{ cursor: 'pointer' }}>
                         Back
                     </button>
                 </Link>
-
                 {data.rooms.map(room => {
                     return (
                         <RoomPayment data={room} />
                     )
                 })}
             </div>
-
             <Payment data={data} />
-
             <footer style={{ padding: "20px" }}></footer>
-
         </Fragment >
     )
 }

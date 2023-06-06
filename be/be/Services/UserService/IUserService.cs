@@ -14,10 +14,10 @@ namespace be.Services
         object Login(string email, string password, IConfiguration config);
         Task<object> Register(User user);
         Task<object> ForgotPassword(string email);
-        Task<object> GetInfo(string token);
-        Task<object> GetUserByEmail(string email);
         void UpdateUserByManagerOrReception(User user);
         IList<User> GetGuestList();
         void ChangeStatus(User user);
+        Task<object> GetInfo(string token);
+        Task<object> GetUserByEmail(string email);
     }
 }

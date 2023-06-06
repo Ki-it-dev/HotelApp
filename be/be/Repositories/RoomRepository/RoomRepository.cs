@@ -242,5 +242,41 @@ namespace be.Repositories.RoomRepository
             }
             return result;
         }
+
+        public dynamic GetRoomsByBookingId(int bookingId)
+        {
+            var rooms = (from room in _context.Rooms
+                        join category in _context.Categories 
+                        on room.CategoryId equals category.CategoryId
+                        join bookingDetail in _context.BookingDetails
+                        on room.RoomId equals bookingDetail.RoomId
+                        where bookingDetail.BookingId == bookingId
+                        orderby room.RoomId
+                        select new
+                        {
+                            room.RoomId,
+                            room.RoomName,
+                            room.Description,
+                            room.CategoryId,
+                            category.CategoryName,
+                            room.Price,
+                            room.Status
+                        }).ToList();
+
+            dynamic result = new List<ExpandoObject>();
+
+            var roomImgs = new List<RoomImg>();
+
+            foreach (var room in rooms)
+            {
+                roomImgs = _roomImgService.GetAllRoomImgByRoomId(room.RoomId).ToList();
+                dynamic temp = new ExpandoObject();
+                temp.roomInfo = room;
+                temp.images = roomImgs;
+                result.Add(temp);
+            }
+
+            return result;
+        }
     }
 }

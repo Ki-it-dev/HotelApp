@@ -7,7 +7,6 @@ import Footer from "../../guest/Footer";
 import SearchArea from '../../viewBookingHistory/SearchArea';
 import TableBookingHistory from '../../viewBookingHistory/TableBookingHistory';
 
-import WaitPayment from '../../viewBookingHistory/WaiPayment';
 //#region STYLES CONSTANT
 const style = {
     padding: 20
@@ -61,14 +60,11 @@ const ViewBookingHistory = () => {
             openNotification(notiProps.type, notiProps.title, notiProps.content);
         }        
     }, []);
-    
-    
 
     return (
         <>
             {contextHolder}
             <Header/>
-            <WaitPayment setTableData={setTableData} />
             <div style={styleCommon}>
                 <Title style={style} level={3}>Booking History</Title>
                 <div style={mainStyle}>
@@ -80,6 +76,7 @@ const ViewBookingHistory = () => {
                     <TableBookingHistory 
                         tableData={tableData}
                         setTableData={setTableData}
+                        userId={userId}
                     />
                 </div>                
             </div>

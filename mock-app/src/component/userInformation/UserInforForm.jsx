@@ -134,7 +134,7 @@ const UserInfoForm = (props) => {
                         name="fullName"
                         rules={[
                             {
-                                pattern: new RegExp(/^[A-Za-z]+$/),
+                                pattern: new RegExp(/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/),
                                 message: 'Full name should not contain special characters and number!'
                             },
                             {

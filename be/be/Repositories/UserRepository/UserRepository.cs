@@ -108,6 +108,52 @@ namespace be.Repositories.UserRepository
         #endregion
 
         #region HIEUVMH15 - LOGIN/REGISTER/CREATE TOKEN
+        public async Task<object> GetInfo(string token)
+        {
+            string _token = token.Split(' ')[1];
+            if (_token == null)
+            {
+                return new
+                {
+                    message = "Token is wrong!",
+                    status = 400
+                };
+            }
+            var handle = new JwtSecurityTokenHandler();
+            string email = handle.ReadJwtToken(_token).Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+            if (user == null)
+            {
+                return new
+                {
+                    message = "User is not found!",
+                    status = 404
+                };
+            }
+            return new
+            {
+                message = "Get information success!",
+                status = 200,
+                data = user
+            };
+        }
+        public async Task<object> GetUserByEmail(string email)
+        {
+            var user = await _context.Users.Where(x => x.Email.Contains(email)).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Email is not found"
+                };
+            }
+            return new
+            {
+                status = 200,
+                message = "Email is found"
+            };
+        }
         public string CreateToken(string email, int id, IConfiguration config)
         {
             string role = _context.Roles.Find(id).RoleName;
@@ -269,52 +315,6 @@ namespace be.Repositories.UserRepository
                 status = 200,
             };
 
-        }
-        public async Task<object> GetInfo(string token)
-        {
-            string _token = token.Split(' ')[1];
-            if (_token == null)
-            {
-                return new
-                {
-                    message = "Token is wrong!",
-                    status = 400
-                };
-            }
-            var handle = new JwtSecurityTokenHandler();
-            string email = handle.ReadJwtToken(_token).Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
-            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
-            if (user == null)
-            {
-                return new
-                {
-                    message = "User is not found!",
-                    status = 404
-                };
-            }
-            return new
-            {
-                message = "Get information success!",
-                status = 200,
-                data = user
-            };
-        }
-        public async Task<object> GetUserByEmail(string email)
-        {
-            var user = await _context.Users.Where(x => x.Email.Contains(email)).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                return new
-                {
-                    status = 404,
-                    message = "Email is not found"
-                };
-            }
-            return new
-            {
-                status = 200,
-                message = "Email is found"
-            };
         }
         #endregion
 

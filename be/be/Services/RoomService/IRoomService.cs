@@ -17,5 +17,7 @@ namespace be.Services
 
         dynamic GetAvailableRoomsByType(string categoryName, DateTime sd, DateTime ed);
         IEnumerable<Room> GetAllRoom();
+
+        List<Room> GetRoomsByBookingId(int bookingId);
     }
 }
