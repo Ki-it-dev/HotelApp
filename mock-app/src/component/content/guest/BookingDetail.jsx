@@ -90,7 +90,7 @@ export default function BookingDetail() {
                 })
 
                 setTimeout(() => {
-                    window.location.href = "/"
+                    window.location.href = process.env.REACT_APP_CLIENT_HOST + '/view-booking-history'
                 }, 3000);
             })
             .catch(error => {
@@ -124,7 +124,7 @@ export default function BookingDetail() {
     const handleCancelPayment = () => {
         // console.log('cancel');
         localStorage.setItem("startTime_" + createBookingId, new Date(createdDate).getTime());
-        window.location.href = 'http://localhost:3000/view-booking-history';
+        window.location.href = process.env.REACT_APP_CLIENT_HOST + '/view-booking-history'
     }
 
     const Payment = (props) => {

@@ -1,0 +1,11 @@
+.react-chatbot-kit-chat-container {
+    width: 400px;
+    position: fixed;
+    right: 16px;
+    bottom: 68px;
+    z-index: 999999999;
+}
+
+.react-chatbot-kit-chat-bot-message {
+    margin-left: inherit;
+}

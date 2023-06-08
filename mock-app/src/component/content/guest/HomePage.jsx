@@ -50,32 +50,9 @@ export default function HomePage() {
             <Header />
             <main>
                 <Carousel style={{ marginTop: "4rem" }} autoplay autoplaySpeed={2000}>
-                    <div >
-                        <div style={contentStyle} className="view" >
-                            <img style={imgStyle} src="img/aerial-shot-aria-hotel-las-vegas-min.jpg" />
-                            <div style={textHeader}>
-                                <h3 className="text-white"
-                                    style={{ fontSize: 40 }}
-                                >WELCOME TO</h3>
-                                <h1 className="text-white"
-                                    style={{ fontSize: 50 }}
-                                >FOUR SEASON Hotel Luxury</h1>
-                                <hr className="" />
-                                <h6 className=""
-                                    style={{ fontSize: 30 }}
-                                >
-                                    <p className="text-white" style={{ color: "#fff" }}>Book your stay and enjoy</p>
-                                    <p className="text-white">redefined at the most afforrdable rates.</p>
-                                </h6>
-                                <a href="#bookNowRoom" className="btnBookNow fontSize20">
-                                    {/* <HomeOutlined className="mr-1" /> */}
-                                    Book now</a>
-                            </div>
-                        </div>
-                    </div>
                     <div>
                         <h3 style={contentStyle}>
-                            <img style={imgStyle} src="img/swimming-pool-with-relaxing-seats-min.jpg" />
+                            <img style={imgStyle} src="img/1.jpg" />
                             <div style={textHeader}>
                                 <h3 className="text-white"
                                     style={{ fontSize: 40 }}
@@ -98,7 +75,7 @@ export default function HomePage() {
                     </div>
                     <div>
                         <h3 style={contentStyle}>
-                            <img style={imgStyle} src="img/sunglasses-burgers-juice-table-with-exotic-lunch-swimming-pool-min.jpg" />
+                            <img style={imgStyle} src="img/room4.jpg" />
                             <div style={textHeader}>
                                 <h3 className="text-white"
                                     style={{ fontSize: 40 }}
@@ -121,7 +98,7 @@ export default function HomePage() {
                     </div>
                     <div>
                         <h3 style={contentStyle}>
-                            <img style={imgStyle} src="img/luxury-dinner-table-hotel-min.jpg" />
+                            <img style={imgStyle} src="img/room5.jpg" />
                             <div style={textHeader}>
                                 <h3 className="text-white"
                                     style={{ fontSize: 40 }}

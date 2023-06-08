@@ -46,6 +46,10 @@ import AnonymousLayout from "./Layout/AnonymousLayout";
 import GuestLayout from './Layout/ManageLayout';
 import ManageLayout from "./Layout/ManageLayout"
 //#endregion
+
+//Chat
+import MainChat from './component/guest/chatbot/mainChat';
+
 function App() {
     const token = JSON.parse(sessionStorage.getItem('token'));
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -53,6 +57,7 @@ function App() {
     return (
         <UserContextProvider>
             <Fragment>
+                <MainChat />
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<HomePage />}></Route>
@@ -71,7 +76,8 @@ function App() {
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/forgot" element={<ForgotPassword />} />
                                 <Route path="/*" element={<Navigate to="/login" />} />
-
+                                <Route path="/booking/:idCategoryName" element={<BookingPage />}></Route>
+                                <Route path="/booking" element={<BookingPage />}></Route>
                             </> :
                             <>
                                 {
@@ -79,10 +85,7 @@ function App() {
                                         <>
                                             <Route path="/my-profile" element={<UserInformationGuest />}></Route>
                                             <Route path="/view-booking-history" element={<ViewBookingHistory />}></Route>
-                                            <Route path="/booking/:idCategoryName" element={<BookingPage />}></Route>
-                                            <Route path="/booking" element={<BookingPage />}></Route>
                                             <Route path="/booking_detail" element={<BookingDetail />}></Route>
-
                                             <Route path="/*" element={<Navigate to="/" />} />
                                         </> :
                                         <>

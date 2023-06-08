@@ -48,7 +48,7 @@ namespace be.Controllers
         {
             try
             {
-                var result = await UserService.GetUserByEmail(email);
+                var result = await _userService.GetUserByEmail(email);
                 return Ok(result);
             }
             catch
@@ -62,7 +62,7 @@ namespace be.Controllers
         {
             try
             {
-                var result = await UserService.ForgotPassword(email);
+                var result = await _userService.ForgotPassword(email);
                 return Ok(result);
             }
             catch
