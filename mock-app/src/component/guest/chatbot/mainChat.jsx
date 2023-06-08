@@ -11,13 +11,13 @@ import '../../../assests/css/chat.css'
 import { MessageTwoTone } from '@ant-design/icons';
 
 export default function MainChat() {
-    const [showBot, toggleBot] = useState(false);
 
+    const [showBot, toggleBot] = useState(false);
     const loadMessages = () => {
         const messages = JSON.parse(localStorage.getItem('chat_messages'));
         return messages;
     };
-    
+
     const validator = (input) => {
         if (!input.replace(/\s/g, '').length) {
             return false;
@@ -30,17 +30,19 @@ export default function MainChat() {
 
     return (
         <div className='App'>
-            {showBot && (
-                <Chatbot
-                    config={config}
-                    actionProvider={ActionProvider}
-                    messageHistory={loadMessages()}
-                    saveMessages={(messages) => localStorage.setItem('chat_messages', JSON.stringify(messages))}
-                    messageParser={MessageParser}
-                    validator={validator}
-                />
-            )}
-            <MessageTwoTone style={{ fontSize: 50 }} className='fixedButton' onClick={() => toggleBot((prev) => !prev)} />
+            <>
+                {showBot && (
+                    <Chatbot
+                        config={config}
+                        actionProvider={ActionProvider}
+                        messageHistory={loadMessages()}
+                        saveMessages={(messages) => localStorage.setItem('chat_messages', JSON.stringify(messages))}
+                        messageParser={MessageParser}
+                        validator={validator}
+                    />
+                )}
+                <MessageTwoTone style={{ fontSize: 50 }} className='fixedButton' onClick={() => toggleBot((prev) => !prev)} />
+            </>
         </div>
     );
 }

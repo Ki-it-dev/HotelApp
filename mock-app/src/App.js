@@ -57,7 +57,7 @@ function App() {
     return (
         <UserContextProvider>
             <Fragment>
-                <MainChat />
+                {user == null ? <MainChat /> : user.roleId == 4 ? <MainChat /> : ''}
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<HomePage />}></Route>
